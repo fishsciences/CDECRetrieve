@@ -1,15 +1,15 @@
-
-#' @export
-cdec_query <- function(x, ...) {
-  UseMethod("cdec_query")
-}
-
 #' Query observation data
 #'
 #' Function queries the CDEC site to obtain desired station data
 #' based on station, sensor number, duration code and start/end date.
 #' Use cdec_datasets() to view an updated list of all available data at a station.
-#'
+#' @export
+cdec_query <- function(x, ...) {
+  UseMethod("cdec_query")
+}
+
+
+#' @describeIn cdec_query Query CDEC using known station, sensor and duration.
 #' @param station three letter identification for CDEC location (example "KWK", "SAC", "CCR")
 #' @param sensor_num sensor number for the measure of interest. (example "20", "01", "25")
 #' @param dur_code duration code for measure interval, "E", "H", "D", which correspong to Event, Hourly and Daily.
@@ -116,15 +116,25 @@ cdec_query.character <- function(station, sensor_num, dur_code,
 }
 
 
+#' @describeIn cdec_query Use output from cdec_datasets to complete a query to CDEC.
+#'
+#' @param .data output from cdec_dataset, intended to be used with the \code{%>%} operator
+#' @param row_id the row id from cdec_dataset output to query for
+#' @param start change the start data for query
+#' @param end change the end data for query
+#' @return dataframe
 #' @export
 cdec_query.cdec_dataset <- function(.data, row_id, start=NULL, end=NULL) {
-  d <- magrittr::extract(.data$data, row_id, )
+  d <- .data$data[row_id, ]
+  start_date <- ifelse(is.null(start), paste(d$start), paste(start))
+  end_date <- ifelse(is.null(end), paste(d$end), paste(end))
+
   cdec_query(
     .data$station,
     d$sensor_number,
     d$duration,
-    "2019-01-01",
-    "2019-02-01"
+    start_date,
+    end_date
   )
 }
 
