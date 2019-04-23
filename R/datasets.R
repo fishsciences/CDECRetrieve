@@ -40,6 +40,7 @@ cdec_datasets <- function(station) {
 
   structure(
     list(
+      station = station,
       url = resp$url,
       data=data
     ),

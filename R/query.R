@@ -1,3 +1,9 @@
+
+#' @export
+cdec_query <- function(x, ...) {
+  UseMethod("cdec_query")
+}
+
 #' Query observation data
 #'
 #' Function queries the CDEC site to obtain desired station data
@@ -18,9 +24,10 @@
 #' ccr_hourly_temps <- CDECRetrieve::cdec_query("CCR", "25", "H", Sys.Date())
 #' }
 #' @export
-cdec_query <- function(station, sensor_num, dur_code,
+cdec_query.character <- function(station, sensor_num, dur_code,
                        start_date=NULL, end_date=NULL,
                        tzone='America/Los_Angeles') {
+
 
   if (!any(tolower(dur_code) == c("h", "d", "m", "e",
                                   "hourly", "daily", "monthly", "event"))) {
@@ -107,3 +114,27 @@ cdec_query <- function(station, sensor_num, dur_code,
 
   return(d)
 }
+
+
+#' @export
+cdec_query.cdec_dataset <- function(.data, row_id, start=NULL, end=NULL) {
+  d <- magrittr::extract(.data$data, row_id, )
+  cdec_query(
+    .data$station,
+    d$sensor_number,
+    d$duration,
+    "2019-01-01",
+    "2019-02-01"
+  )
+}
+
+
+
+
+
+
+
+
+
+
+
