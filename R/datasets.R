@@ -36,7 +36,20 @@ cdec_datasets <- function(station) {
 
   raw_data <- rvest::html_table(resp_at_node)[[1]]
 
-  clean_datasets_resp(raw_data)
+  data <- clean_datasets_resp(raw_data)
+
+  structure(
+    list(
+      url = resp$url,
+      data=data
+    ),
+    class = "cdec_dataset"
+  )
+}
+
+#' @export
+print.cdec_dataset <- function(x, ...) {
+  print(x$data)
 }
 
 # INTERNAL -----
